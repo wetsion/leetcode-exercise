@@ -1,6 +1,6 @@
 package site.wetsion.app.leetcode.exercise.p_315;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -12,19 +12,45 @@ import java.util.List;
  * @date 2020/5/12 2:21 PM
  */
 public class Problem315 {
+
+    class TreeNode {
+        int value;
+        int count;
+        TreeNode left;
+        TreeNode right;
+        TreeNode(int val) {
+            value = val;
+            count = 0;
+            left = null;
+            right = null;
+        }
+    }
     class Solution {
         public List<Integer> countSmaller(int[] nums) {
-            List<Integer> list = new ArrayList<>(nums.length);
-            for (int i = 0; i < nums.length; i++) {
-                int count = 0;
-                for (int j = nums.length - 1; j > i; j--) {
-                    if (nums[j] < nums[i]) {
-                        count ++;
-                    }
-                }
-                list.add(count);
+            Integer[] arr = new Integer[nums.length];
+            for (int i = 0; i < arr.length; i++) {
+                arr[i] = 0;
             }
-            return list;
+            TreeNode root = null;
+            for (int i = nums.length - 1; i >= 0; i--) {
+                root = insertTree(root, new TreeNode(nums[i]), arr, i);
+            }
+            return Arrays.asList(arr);
+        }
+
+        private TreeNode insertTree(TreeNode parent, TreeNode node, Integer[] arr, int index) {
+            if (parent == null) {
+                parent = node;
+                return parent;
+            }
+            if (parent.value > node.value) {
+                parent.count ++;
+                parent.left = insertTree(parent.left, node, arr, index);
+            } else {
+                arr[index] += parent.count + 1;
+                parent.right = insertTree(parent.right, node, arr, index);
+            }
+            return parent;
         }
     }
 }
