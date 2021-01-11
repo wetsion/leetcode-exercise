@@ -1,5 +1,7 @@
 package site.wetsion.app.leetcode.exercise.p_395;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,69 +10,42 @@ import java.util.Map;
  * https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/
  *
  *
- * // TODO 待完善
+ * 思路：遍历字符串，记录每个字母出现的总次数，找到次数小于k的第一个字母的位置，根据这个位置，将字符串分为左右两个字符串，递归下去，
+ * 递归退出条件为中间位置坐标为-1
+ *
  * @author weixin
  * @version 1.0
- * @date 2020/5/15 11:09 AM
+ * @date 2021/01/11 22:40
  */
+@Slf4j
 public class Problem395 {
 
     static class Solution {
 
-        private int strLength;
         public int longestSubstring(String s, int k) {
-            if (s.length() < k) {
-                return 0;
+            char[] arr = s.toCharArray();
+            Map<Character, Integer> charCount = new HashMap<>(s.length());
+            for (int i = 0; i < arr.length; i++) {
+                int lastCount = charCount.getOrDefault(arr[i], 0);
+                charCount.put(arr[i], ++lastCount);
             }
-            if (k == 1) {
-                return s.length();
-            }
-            int result = 0;
-            strLength = s.length();
-            Map<String, Integer> map = new HashMap<>();
-            int currentUpperLimit = k;
-            int currentIndex = 0;
-            while(true) {
-                if (currentIndex < strLength) {
-                    if (currentIndex < currentUpperLimit) {
-                        if (currentIndex == currentUpperLimit - 1) {
-                            // 说明正好到达上限
-                            int preSize = map.keySet().size();
-                            int nextIndex = currentIndex + 1;
-                            String c = s.substring(currentIndex, nextIndex);
-                            insertMap(map, c);
-                            int currentSize = map.keySet().size();
-                            if (currentSize == preSize) {
-                                result = currentUpperLimit;
-                                currentUpperLimit++;
-                                currentIndex++;
-                            } else {
-                                currentUpperLimit = currentSize * k;
-                                currentIndex++;
-                            }
-                        } else {
-                            int nextIndex = currentIndex + 1;
-                            String c = s.substring(currentIndex, nextIndex);
-                            insertMap(map, c);
-                            currentUpperLimit = map.keySet().size() * k;
-                            currentIndex++;
-                        }
-                    } else {
-                        break;
-                    }
-                } else {
+            log.info("map: {}", charCount);
+            int midPos = -1;
+            for (int i = 0; i < arr.length; i++) {
+                if (charCount.get(arr[i]) < k) {
+                    midPos = i;
                     break;
                 }
             }
-            return result;
-        }
-
-        private void insertMap(Map<String, Integer> map, String s) {
-            if (map.containsKey(s)) {
-                map.put(s, map.get(s) + 1);
-            } else {
-                map.put(s, 1);
+            if (midPos == -1) {
+                return s.length();
             }
+            String left = s.substring(0, midPos);
+            String right = s.substring(midPos + 1);
+            log.info("left: {}, right: {}", left, right);
+            int leftCount = longestSubstring(left, k);
+            int rightCount = longestSubstring(right, k);
+            return Integer.max(leftCount, rightCount);
         }
     }
 
