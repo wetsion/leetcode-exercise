@@ -1,6 +1,7 @@
 package site.wetsion.app.leetcode.exercise.p_395;
 
 import lombok.extern.slf4j.Slf4j;
+import site.wetsion.app.leetcode.exercise.common.Difficulty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Map;
  * 395. 至少有K个重复字符的最长子串
  * https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/
  *
+ * 难度 {@link Difficulty#MIDDLE} <br/>
  *
  * 思路：遍历字符串，记录每个字母出现的总次数，找到次数小于k的第一个字母的位置，根据这个位置，将字符串分为左右两个字符串，递归下去，
  * 递归退出条件为中间位置坐标为-1
